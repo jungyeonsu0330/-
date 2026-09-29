@@ -20,22 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
       page: 1
     },
     newsCategory: "ALL",
-    newsPage: 1
+    newsPage: 1,
+    searchQuery: ""
   };
 
   // DOM 캐싱
   const DOM = {
     // 탭 네비게이션
     navBtns: document.querySelectorAll(".nav-tab-btn"),
+    mobileNavBtns: document.querySelectorAll(".mobile-nav-btn"),
     tabPanes: document.querySelectorAll(".tab-pane"),
 
     // 헤더 컨트롤
     currentStudentSelect: document.getElementById("currentStudentSelect"),
     btnOpenStudentModal: document.getElementById("btnOpenStudentModal"),
     btnPrintReportHeader: document.getElementById("btnPrintReportHeader"),
+    dDayCardsContainer: document.getElementById("dDayCardsContainer"),
 
     // 탭 1: 뉴스 & 챗봇
     newsCategoryFilter: document.getElementById("newsCategoryFilter"),
+    newsSearchInput: document.getElementById("newsSearchInput"),
     newsTrendBox: document.getElementById("newsTrendBox"),
     newsListContainer: document.getElementById("newsListContainer"),
     newsPaginationContainer: document.getElementById("newsPaginationContainer"),
@@ -125,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 1. 초기화 함수
   function init() {
+    renderDDayTicker();
     loadStudents();
     renderNews();
     renderTimeline();
@@ -132,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderUniversityDB();
     renderConsultingTab();
     renderReport();
+    renderQuickSimulator();
     bindEvents();
     syncLatestNewsFromServer();
 
@@ -174,6 +180,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    if (DOM.mobileNavBtns) {
+      DOM.mobileNavBtns.forEach(btn => {
+        if (btn.dataset.tab === targetTabId) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
     DOM.tabPanes.forEach(pane => {
       if (pane.id === targetTabId) {
         pane.classList.add("active");
@@ -192,16 +208,89 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 4. 뉴스 렌더링 (전체 트렌드 요약 + 페이지네이션 적용)
+  // 실시간 입시 D-Day 티커 자동 계산 & 렌더링
+  function renderDDayTicker() {
+    if (!DOM.dDayCardsContainer) return;
+    const now = new Date();
+
+    const schedules = [
+      { title: "2027 수능", date: new Date(2026, 10, 19), badgeClass: "" },
+      { title: "9월 모의평가", date: new Date(2026, 8, 2), badgeClass: "blue" },
+      { title: "수시 원서접수", date: new Date(2026, 8, 7), badgeClass: "amber" },
+      { title: "정시 원서접수", date: new Date(2026, 11, 29), badgeClass: "" },
+    ];
+
+    const cardsHtml = schedules.map(sc => {
+      const diffMs = sc.date.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const dDayText = diffDays > 0 ? `D-${diffDays}` : (diffDays === 0 ? "D-Day" : `D+${Math.abs(diffDays)}`);
+      const dateStr = `${sc.date.getMonth() + 1}/${sc.date.getDate()}`;
+      return `
+        <div class="ticker-dday-card">
+          <span class="ticker-dday-badge ${sc.badgeClass}">${dDayText}</span>
+          <span>${sc.title} (${dateStr})</span>
+        </div>
+      `;
+    }).join("");
+
+    DOM.dDayCardsContainer.innerHTML = cardsHtml;
+  }
+
+  // 목표 대학 합격선 간이 진단 시뮬레이터
+  function renderQuickSimulator() {
+    const btn = document.getElementById("btnRunQuickSim");
+    const resultBox = document.getElementById("quickSimResultBox");
+    if (!btn || !resultBox) return;
+
+    const calculate = () => {
+      const gpa = parseFloat(document.getElementById("quickGpaInput")?.value || "2.1");
+      const csat = parseInt(document.getElementById("quickCsatInput")?.value || "89", 10);
+
+      let stable = [];
+      let proper = [];
+      let challenge = [];
+
+      if (gpa <= 1.3 || csat >= 96) {
+        stable = ["연세대", "고려대", "서강대", "성균관대"];
+        proper = ["서울대", "의약학(지역인재)", "카이스트"];
+        challenge = ["메이저 의예과", "서울대 최상위학과"];
+      } else if (gpa <= 2.0 || csat >= 88) {
+        stable = ["중앙대", "경희대", "한국외대", "서울시립대"];
+        proper = ["서강대", "성균관대", "한양대"];
+        challenge = ["연세대", "고려대 비인기/어문"];
+      } else if (gpa <= 3.0 || csat >= 77) {
+        stable = ["국민대", "숭실대", "세종대", "단국대"];
+        proper = ["건국대", "동국대", "홍익대", "숙명여대"];
+        challenge = ["중앙대", "경희대 교과/학종"];
+      } else {
+        stable = ["경기대", "가천대", "인천대", "충남대"];
+        proper = ["상명대", "명지대", "서경대", "한성대"];
+        challenge = ["국민대", "단국대"];
+      }
+
+      resultBox.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:5px; line-height:1.4;">
+          <div><strong style="color:#34d399;">🟢 안정:</strong> <span style="color:#e2e8f0;">${stable.join(", ")}</span></div>
+          <div><strong style="color:#60a5fa;">🟡 적정:</strong> <span style="color:#e2e8f0;">${proper.join(", ")}</span></div>
+          <div><strong style="color:#f87171;">🔴 소신:</strong> <span style="color:#e2e8f0;">${challenge.join(", ")}</span></div>
+        </div>
+      `;
+    };
+
+    btn.addEventListener("click", calculate);
+    calculate();
+  }
+
+  // 4. 뉴스 렌더링 (전체 트렌드 요약 + 검색어 + 북마크 + 페이지네이션 적용)
   function renderNews() {
     if (DOM.newsTrendBox) {
       DOM.newsTrendBox.innerHTML = NewsEngine.renderNewsTrendSummaryHTML(State.newsCategory);
     }
     if (DOM.newsListContainer) {
-      DOM.newsListContainer.innerHTML = NewsEngine.renderNewsListHTML(State.newsCategory, State.newsPage);
+      DOM.newsListContainer.innerHTML = NewsEngine.renderNewsListHTML(State.newsCategory, State.newsPage, 4, State.searchQuery);
     }
     if (DOM.newsPaginationContainer) {
-      DOM.newsPaginationContainer.innerHTML = NewsEngine.renderNewsPaginationHTML(State.newsCategory, State.newsPage);
+      DOM.newsPaginationContainer.innerHTML = NewsEngine.renderNewsPaginationHTML(State.newsCategory, State.newsPage, 4, State.searchQuery);
     }
   }
 
@@ -795,6 +884,37 @@ document.addEventListener("DOMContentLoaded", () => {
         renderNews();
       }
     });
+
+    // 실시간 뉴스 키워드 검색
+    if (DOM.newsSearchInput) {
+      DOM.newsSearchInput.addEventListener("input", (e) => {
+        State.searchQuery = e.target.value;
+        State.newsPage = 1;
+        renderNews();
+      });
+    }
+
+    // 뉴스 북마크(스크랩) 클릭 이벤트 위임
+    if (DOM.newsListContainer) {
+      DOM.newsListContainer.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-news-bookmark");
+        if (btn) {
+          const id = btn.dataset.newsId;
+          NewsEngine.toggleBookmark(id);
+          renderNews();
+        }
+      });
+    }
+
+    // 모바일 전용 하단 고정 내비게이션 바 이벤트
+    if (DOM.mobileNavBtns) {
+      DOM.mobileNavBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchTab(btn.dataset.tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+    }
 
     // 뉴스 페이지네이션 클릭 이벤트 (이벤트 위임)
     if (DOM.newsPaginationContainer) {

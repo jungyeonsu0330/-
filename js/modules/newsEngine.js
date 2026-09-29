@@ -18,8 +18,30 @@ const NewsEngine = {
     this.currentTimelineCategory = cat;
   },
 
-  // 1. 카테고리 필터링 헬퍼 (최근 1년 치 보관 & 이전 자료 자동 제외)
-  getFilteredNews: function(category = "ALL") {
+  // 북마크(스크랩) 관리
+  getBookmarks: function() {
+    try {
+      return JSON.parse(localStorage.getItem('steady_news_bookmarks') || '[]');
+    } catch (e) {
+      return [];
+    }
+  },
+
+  isBookmarked: function(newsId) {
+    return this.getBookmarks().includes(newsId);
+  },
+
+  toggleBookmark: function(newsId) {
+    const marks = this.getBookmarks();
+    const next = marks.includes(newsId) ? marks.filter(id => id !== newsId) : [...marks, newsId];
+    try {
+      localStorage.setItem('steady_news_bookmarks', JSON.stringify(next));
+    } catch (e) {}
+    return next.includes(newsId);
+  },
+
+  // 1. 카테고리 & 검색어 & 북마크 필터링 헬퍼 (최근 1년 치 보관 & 이전 자료 자동 제외)
+  getFilteredNews: function(category = "ALL", searchQuery = "") {
     let list = (typeof window !== 'undefined' && window.EDUCATION_NEWS_DATA && window.EDUCATION_NEWS_DATA.length > 0)
       ? window.EDUCATION_NEWS_DATA
       : (typeof EDUCATION_NEWS_DATA !== 'undefined' ? EDUCATION_NEWS_DATA : []);
@@ -32,7 +54,11 @@ const NewsEngine = {
       return isNaN(d.getTime()) || d.getTime() >= oneYearAgoMs;
     });
 
-    if (category !== "ALL") {
+    // 북마크 모드
+    if (category === "BOOKMARK") {
+      const bookmarks = this.getBookmarks();
+      list = list.filter(item => bookmarks.includes(item.id));
+    } else if (category !== "ALL") {
       list = list.filter(item => {
         const cat = item.category || "";
         if (category === "의약학" || category === "의약학/정원") {
@@ -56,6 +82,18 @@ const NewsEngine = {
         return cat.includes(category);
       });
     }
+
+    // 키워드 검색어 필터링
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter(item => {
+        const title = (item.title || "").toLowerCase();
+        const summary = (item.aiSummary || []).join(" ").toLowerCase();
+        const tags = (item.relatedKeywords || []).join(" ").toLowerCase();
+        return title.includes(q) || summary.includes(q) || tags.includes(q);
+      });
+    }
+
     return list;
   },
 
@@ -380,15 +418,15 @@ const NewsEngine = {
   },
 
   // 3. 페이지네이션된 뉴스 카드 목록 렌더링
-  renderNewsListHTML: function(category = "ALL", page = 1, pageSize = 4) {
-    const list = this.getFilteredNews(category);
+  renderNewsListHTML: function(category = "ALL", page = 1, pageSize = 4, searchQuery = "") {
+    const list = this.getFilteredNews(category, searchQuery);
 
     if (list.length === 0) {
       return `
         <div class="empty-news-box" style="text-align:center; padding:3rem 1.5rem; background:var(--bg-glass-card); border:1px dashed var(--border-glass); border-radius:var(--radius-lg); color:var(--text-muted);">
           <div style="font-size:2rem; margin-bottom:0.8rem;">📰</div>
-          <p style="font-size:1rem; font-weight:600; color:var(--text-main); margin-bottom:0.4rem;">해당 카테고리의 최신 뉴스를 준비 중입니다.</p>
-          <p style="font-size:0.85rem; margin-bottom:1rem;">상단의 <strong>[🔄 실시간 뉴스 자동 업데이트]</strong> 버튼을 누르면 실시간 크롤링 파이프라인이 즉시 가동됩니다.</p>
+          <p style="font-size:1rem; font-weight:600; color:var(--text-main); margin-bottom:0.4rem;">해당 조건의 뉴스를 찾을 수 없습니다.</p>
+          <p style="font-size:0.85rem; margin-bottom:1rem;">다른 키워드로 검색하거나 상단의 <strong>[🔄 실시간 뉴스 자동 업데이트]</strong> 버튼을 눌러보세요.</p>
         </div>
       `;
     }
@@ -400,6 +438,12 @@ const NewsEngine = {
       const originalLinkHtml = news.link && news.link !== '#'
         ? `<a href="${news.link}" target="_blank" rel="noopener noreferrer" class="link-original-article" title="언론사 원문 기사 열기">기사 원문 ↗</a>`
         : '';
+      const isSaved = this.isBookmarked(news.id);
+      const bookmarkBtnHtml = `
+        <button type="button" class="btn-news-bookmark ${isSaved ? 'bookmarked' : ''}" data-news-id="${news.id}" title="${isSaved ? '스크랩 해제' : '기사 스크랩(보관)'}">
+          ${isSaved ? '★ 보관됨' : '☆ 스크랩'}
+        </button>
+      `;
 
       return `
         <article class="news-card ${news.urgency === 'HIGH' ? 'urgent' : ''}" id="${news.id}">
@@ -409,6 +453,7 @@ const NewsEngine = {
             <span class="news-time">${news.publishedAt}</span>
             ${news.urgency === 'HIGH' ? '<span class="badge-urgent">🔥 속보/핵심이슈</span>' : ''}
             <div style="margin-left:auto; display:flex; align-items:center; gap:0.6rem;">
+              ${bookmarkBtnHtml}
               ${originalLinkHtml}
             </div>
           </div>
@@ -448,8 +493,8 @@ const NewsEngine = {
   },
 
   // 4. 뉴스 페이지네이션 바 HTML (2번 사진 스타일: 원형 이전/다음 버튼 + 수평 숫자 나열)
-  renderNewsPaginationHTML: function(category = "ALL", currentPage = 1, pageSize = 4) {
-    const list = this.getFilteredNews(category);
+  renderNewsPaginationHTML: function(category = "ALL", currentPage = 1, pageSize = 4, searchQuery = "") {
+    const list = this.getFilteredNews(category, searchQuery);
     const totalCount = list.length;
     const totalPages = Math.ceil(totalCount / pageSize);
 

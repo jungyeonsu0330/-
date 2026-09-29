@@ -64,6 +64,19 @@
     </div>
   </header>
 
+  <!-- 실시간 입시 D-Day 카운트다운 티커 배너 -->
+  <section class="admission-dday-ticker" id="dDayTickerBar">
+    <div class="ticker-inner">
+      <div class="ticker-title">
+        <span class="ticker-icon">🔥</span>
+        <strong>2027 대입 실시간 D-Day</strong>
+      </div>
+      <div class="ticker-cards" id="dDayCardsContainer">
+        <!-- JS로 동적 자동 계산 렌더링 -->
+      </div>
+    </div>
+  </section>
+
   <!-- 메인 작업 영역 -->
   <main class="app-container">
 
@@ -74,6 +87,7 @@
           <div class="filter-bar">
             <div class="category-chips" id="newsCategoryFilter">
               <button class="chip-btn active" data-cat="ALL">전체 뉴스</button>
+              <button class="chip-btn" data-cat="BOOKMARK" style="border-color:#f59e0b; color:#fbbf24;">⭐ 스크랩 보관함</button>
               <button class="chip-btn" data-cat="정책/제도">정책/제도</button>
               <button class="chip-btn" data-cat="수능/모의평가">수능/모의평가</button>
               <button class="chip-btn" data-cat="전문대">전문대</button>
@@ -81,6 +95,18 @@
               <button class="chip-btn" data-cat="전형분석">전형분석</button>
               <button class="chip-btn" data-cat="고입뉴스">고입뉴스</button>
             </div>
+
+            <!-- 실시간 뉴스 키워드 검색창 -->
+            <div class="news-search-box">
+              <input
+                type="text"
+                id="newsSearchInput"
+                class="news-search-input"
+                placeholder="🔍 뉴스 키워드 검색 (의대, 수시, 정시, 2028...)"
+                aria-label="뉴스 키워드 검색"
+              />
+            </div>
+
             <div class="news-sync-controls">
               <span class="news-sync-status badge-live-green" id="newsSyncStatus">
                 <span class="pulse-dot-green"></span>실시간 피드 동기화
@@ -106,8 +132,37 @@
           </div>
         </div>
 
-        <!-- 우측 사이드바: 입시 D-Day 타임라인 & 실시간 입시 AI 챗봇 -->
+        <!-- 우측 사이드바: 입시 D-Day 타임라인 & 실시간 목표대학 간편 시뮬레이터 -->
         <aside class="news-side-col">
+          <!-- 목표 대학 합격 시뮬레이터 미니 위젯 -->
+          <div class="side-panel target-simulator-panel" style="margin-bottom: 1.25rem;">
+            <div class="panel-heading">
+              <div style="display:flex; align-items:center; gap:0.45rem;">
+                <span>🎯</span>
+                <strong>목표 대학 합격선 간이 진단</strong>
+              </div>
+              <span class="badge" style="background:rgba(99,102,241,0.2); color:#a5b4fc; font-size:0.72rem; padding:2px 6px; border-radius:4px;">실시간 매핑</span>
+            </div>
+            <div style="padding: 1rem;">
+              <div style="display:flex; gap:0.6rem; margin-bottom:0.75rem;">
+                <div style="flex:1;">
+                  <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">내신 평균 (등급)</label>
+                  <input type="number" id="quickGpaInput" step="0.1" min="1.0" max="9.0" value="2.1" style="width:100%; padding:6px 8px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-weight:700;" />
+                </div>
+                <div style="flex:1;">
+                  <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">수능 모의 백분위</label>
+                  <input type="number" id="quickCsatInput" min="0" max="100" value="89" style="width:100%; padding:6px 8px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-weight:700;" />
+                </div>
+              </div>
+              <button type="button" id="btnRunQuickSim" class="btn-primary" style="width:100%; padding:7px; font-size:0.82rem; font-weight:800; border-radius:6px; justify-content:center;">
+                ⚡ 지원 가능 대학군 즉시 분석
+              </button>
+              <div id="quickSimResultBox" style="margin-top:0.75rem; font-size:0.78rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:8px 10px;">
+                <!-- JS로 즉시 계산 -->
+              </div>
+            </div>
+          </div>
+
           <div class="side-panel">
             <div class="panel-heading">
               <div style="display:flex; align-items:center; gap:0.45rem;">
@@ -532,6 +587,30 @@
       </div>
     </div>
   </div>
+
+  <!-- 모바일/태블릿 전용 고정 하단 탭바 -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="모바일 하단 내비게이션">
+    <button class="mobile-nav-btn active" data-tab="tabNews">
+      <span class="icon">📰</span>
+      <span class="label">입시뉴스</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tabUniversityDB">
+      <span class="icon">🏛</span>
+      <span class="label">대학DB</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tabMayChanges">
+      <span class="icon">⚡</span>
+      <span class="label">5월변동</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tabConsulting">
+      <span class="icon">🎯</span>
+      <span class="label">진학컨설팅</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tabReport">
+      <span class="icon">📄</span>
+      <span class="label">리포트</span>
+    </button>
+  </nav>
 
   <!-- 스크립트 로드 순서: 데이터셋 -> 핵심 모듈 -> 메인 앱 -->
   <script src="js/data/universities_4y.js?v=1285"></script>

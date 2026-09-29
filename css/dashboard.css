@@ -1847,4 +1847,195 @@
   }
 }
 
+/* =========================================================
+   🔥 입시 D-Day 실시간 티커 바 스타일
+   ========================================================= */
+.admission-dday-ticker {
+  background: linear-gradient(90deg, #111827 0%, #1e1b4b 50%, #0f172a 100%);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 0.65rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.ticker-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.ticker-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #fbbf24;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.ticker-cards {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.ticker-dday-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  color: #e2e8f0;
+}
+
+.ticker-dday-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.ticker-dday-badge.blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+.ticker-dday-badge.amber {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+/* =========================================================
+   🔍 뉴스 키워드 검색창 & 북마크 버튼 스타일
+   ========================================================= */
+.news-search-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.news-search-input {
+  width: 100%;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.news-search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-news-bookmark {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-news-bookmark:hover {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: #f59e0b;
+}
+
+.btn-news-bookmark.bookmarked {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+/* =========================================================
+   📱 모바일 전용 하단 고정 내비게이션 바 (최적화)
+   ========================================================= */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 4px;
+  z-index: 9999;
+  justify-content: space-around;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-nav-btn {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.mobile-nav-btn .icon {
+  font-size: 1.15rem;
+}
+
+.mobile-nav-btn .label {
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.mobile-nav-btn.active {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  body {
+    padding-bottom: 60px !important;
+  }
+  .global-header {
+    padding: 0.5rem 1rem;
+  }
+  .nav-tabs {
+    display: none; /* 모바일에서는 하단 탭바로 대체 */
+  }
+  .header-actions {
+    margin-left: auto;
+    gap: 0.4rem;
+  }
+  .news-search-box {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+
 
