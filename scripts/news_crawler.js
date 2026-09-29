@@ -426,21 +426,23 @@ async function runNewsPipeline() {
     currentContent = fs.readFileSync(jsFilePath, 'utf-8');
   }
 
-  const scheduleMatch = currentContent.match(/const ADMISSION_SCHEDULE_DATA = (\[[\s\S]*?\]);/);
-  const chatbotMatch = currentContent.match(/const ADMISSION_AI_KNOWLEDGE = (\[[\s\S]*?\]);/);
+  const chatbotMatch = currentContent.match(/(?:const|var) ADMISSION_AI_KNOWLEDGE = (\[[\s\S]*?\]);/);
 
   const updatedJsContent = `// 실시간 교육 뉴스 & AI 브리핑 및 입시 핫이슈 데이터셋
 // 어디가(전수) + 교육을 비추다(전수) + 네이버 언론사(일일 3건 엄선 & 중복 압축) 파이프라인 자동 생성
 // 갱신 시각: ${new Date().toLocaleString('ko-KR')}
 
-const EDUCATION_NEWS_DATA = ${JSON.stringify(allFinalArticles, null, 2)};
+var EDUCATION_NEWS_DATA = ${JSON.stringify(allFinalArticles, null, 2)};
 
-${scheduleMatch ? `const ADMISSION_SCHEDULE_DATA = ${scheduleMatch[1]};` : `const ADMISSION_SCHEDULE_DATA = [];`}
+var ADMISSION_AI_KNOWLEDGE = ${chatbotMatch ? chatbotMatch[1] : '[]'};
 
-${chatbotMatch ? `const ADMISSION_AI_KNOWLEDGE = ${chatbotMatch[1]};` : `const ADMISSION_AI_KNOWLEDGE = [];`}
+if (typeof window !== 'undefined') {
+  window.EDUCATION_NEWS_DATA = EDUCATION_NEWS_DATA;
+  window.ADMISSION_AI_KNOWLEDGE = ADMISSION_AI_KNOWLEDGE;
+}
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { EDUCATION_NEWS_DATA, ADMISSION_SCHEDULE_DATA, ADMISSION_AI_KNOWLEDGE };
+  module.exports = { EDUCATION_NEWS_DATA, ADMISSION_AI_KNOWLEDGE };
 }
 `;
 

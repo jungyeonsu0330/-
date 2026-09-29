@@ -20,7 +20,9 @@ const NewsEngine = {
 
   // 1. 카테고리 필터링 헬퍼 (최근 1년 치 보관 & 이전 자료 자동 제외)
   getFilteredNews: function(category = "ALL") {
-    let list = typeof EDUCATION_NEWS_DATA !== 'undefined' ? EDUCATION_NEWS_DATA : [];
+    let list = (typeof window !== 'undefined' && window.EDUCATION_NEWS_DATA && window.EDUCATION_NEWS_DATA.length > 0)
+      ? window.EDUCATION_NEWS_DATA
+      : (typeof EDUCATION_NEWS_DATA !== 'undefined' ? EDUCATION_NEWS_DATA : []);
     
     // [1년 보존 정책] 최근 1년(365일) 이내 기사만 화면에 유지, 1년 초과 과거 자료는 자동 제외
     const oneYearAgoMs = Date.now() - (365 * 24 * 60 * 60 * 1000);
@@ -59,9 +61,11 @@ const NewsEngine = {
 
   // 2. 카테고리별 1:1 맞춤형 실시간 AI 핵심 트렌드 브리핑 배너
   renderNewsTrendSummaryHTML: function(category = "ALL") {
-    const allNews = typeof EDUCATION_NEWS_DATA !== 'undefined' ? EDUCATION_NEWS_DATA : [];
+    const allNews = (typeof window !== 'undefined' && window.EDUCATION_NEWS_DATA && window.EDUCATION_NEWS_DATA.length > 0)
+      ? window.EDUCATION_NEWS_DATA
+      : (typeof EDUCATION_NEWS_DATA !== 'undefined' ? EDUCATION_NEWS_DATA : []);
     const catList = this.getFilteredNews(category);
-    const catCount = category === "ALL" ? allNews.length : catList.length;
+    const catCount = category === "ALL" ? catList.length : catList.length;
 
     // 카테고리별 1:1 맞춤형 렌더링 분기
     if (category === "의약학" || category === "의약학/정원") {
@@ -601,19 +605,7 @@ const NewsEngine = {
       `;
     }).join('');
 
-    // 공식 링크 배너 HTML
-    const portalLinks = (typeof ADMISSION_PORTAL_LINKS !== 'undefined' && ADMISSION_PORTAL_LINKS[mode === 'HIGHSCHOOL' ? 'highschool' : 'univ']) || [];
-    const portalLinksHtml = portalLinks.map(link => `
-      <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="portal-badge-link" title="${link.desc}">
-        ${link.title} ↗
-      </a>
-    `).join('');
-
     return `
-      <div class="timeline-portal-bar">
-        <span class="portal-bar-label">공식 포털:</span>
-        <div class="portal-bar-links">${portalLinksHtml}</div>
-      </div>
       <div class="timeline-items-wrapper">
         ${itemsHtml}
       </div>

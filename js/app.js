@@ -908,9 +908,37 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("현재 학생의 최신 성적 및 3개년 컷 데이터를 바탕으로 수시 6장 및 정시 3장 포트폴리오가 재산출되었습니다.");
     });
 
-    // 인쇄 트리거
+    // URL 역할(role) 파라미터 감지 및 UI 모드 적용
+    const urlParams = new URLSearchParams(window.location.search);
+    const userRole = (urlParams.get("role") || "TEACHER").toUpperCase();
+    const isDirector = userRole === "DIRECTOR";
+
+    if (!isDirector) {
+      if (DOM.btnPrintReportHeader) {
+        DOM.btnPrintReportHeader.innerHTML = '<span>📑</span> 리포트 결재 상신';
+        DOM.btnPrintReportHeader.title = '작성된 1장 리포트를 원장님 전자결재함으로 상신합니다.';
+      }
+      if (DOM.btnPrintReport) {
+        DOM.btnPrintReport.innerHTML = '<span>📑</span> 원장님께 리포트 승인 요청 (상신)';
+        DOM.btnPrintReport.title = '원장님 최종 승인을 요청합니다.';
+      }
+    } else {
+      if (DOM.btnPrintReportHeader) {
+        DOM.btnPrintReportHeader.innerHTML = '<span>🖨</span> 리포트 인쇄 (전결)';
+      }
+      if (DOM.btnPrintReport) {
+        DOM.btnPrintReport.innerHTML = '<span>🖨</span> 리포트 즉시 출력/발행 (원장 전결)';
+      }
+    }
+
+    // 인쇄 / 결재 상신 트리거
     const triggerPrint = () => {
       switchTab("tabReport");
+      if (!isDirector) {
+        const studentName = State.currentStudent ? State.currentStudent.name : "학생";
+        alert(`[원장님 전자결재 상신 완료]\n${studentName} 학생의 '1장 프리미엄 입시 진단 리포트'가 반승휘 원장님 결재함으로 상신되었습니다.\n원장님 최종 승인 후 대외 인쇄 및 학부모 전송이 가능합니다.`);
+        return;
+      }
       setTimeout(() => {
         window.print();
       }, 300);

@@ -20,34 +20,29 @@
 /* 1. 뉴스 & AI 브리핑 그리드 */
 .news-layout {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.25rem;
-  max-width: 100%;
+  grid-template-columns: 1fr 360px;
+  gap: 2rem;
 }
 
 .news-main-col {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  min-width: 0;
+  gap: 1.5rem;
 }
 
 .filter-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
   background: var(--bg-glass-card);
-  padding: 0.8rem 1.2rem;
+  padding: 1rem 1.5rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-glass);
 }
 
 .category-chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .chip-btn {
@@ -97,259 +92,6 @@
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-/* AI 실시간 핵심 트렌드 브리핑 카드 & 카테고리별 맞춤 피드 */
-.news-trend-summary-box {
-  margin-bottom: 0.5rem;
-}
-
-.trend-summary-card {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.96) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.4rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.trend-summary-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(to bottom, #38bdf8, #818cf8, #c084fc);
-}
-
-.trend-summary-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.trend-title-box {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-}
-
-.trend-icon {
-  font-size: 1.2rem;
-  display: inline-flex;
-}
-
-.trend-title-box strong {
-  font-size: 1.02rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.3px;
-}
-
-.badge-trend-count {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  padding: 0.15rem 0.55rem;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.trend-live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--radius-full);
-}
-
-/* 3분할 종합 그리드 (전체 보기 시) */
-.trend-bullets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 0.9rem;
-}
-
-.trend-bullet-card {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  padding: 0.95rem 1.05rem;
-  transition: all 0.25s ease;
-}
-
-.trend-bullet-card:hover {
-  background: rgba(30, 41, 59, 0.7);
-  border-color: rgba(99, 102, 241, 0.4);
-  transform: translateY(-2px);
-}
-
-.bullet-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.55rem;
-}
-
-.bullet-tag-pill {
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 0.2rem 0.55rem;
-  border-radius: 4px;
-}
-
-.bullet-tag-pill.tag-med {
-  background: rgba(244, 63, 94, 0.18);
-  color: #fda4af;
-  border: 1px solid rgba(244, 63, 94, 0.4);
-}
-
-.bullet-tag-pill.tag-exam {
-  background: rgba(59, 130, 246, 0.18);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.4);
-}
-
-.bullet-tag-pill.tag-univ {
-  background: rgba(16, 185, 129, 0.18);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.4);
-}
-
-.bullet-urgency {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #f59e0b;
-}
-
-.trend-bullet-card p {
-  font-size: 0.82rem;
-  color: #cbd5e1;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.trend-bullet-card p strong {
-  color: #ffffff;
-}
-
-/* 카테고리 1:1 맞춤형 전용 패널 레이아웃 */
-.trend-focused-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.trend-focused-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 0.9rem;
-}
-
-.trend-focus-box {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  padding: 0.95rem 1.1rem;
-}
-
-.trend-focus-box.primary-focus {
-  border-left: 3px solid #38bdf8;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
-}
-
-.trend-focus-box.secondary-focus {
-  border-left: 3px solid #facc15;
-}
-
-.focus-box-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.86rem;
-  font-weight: 800;
-  color: #38bdf8;
-}
-
-.focus-box-title.gold {
-  color: #facc15;
-}
-
-.focus-box-content {
-  font-size: 0.84rem;
-  color: #e2e8f0;
-  line-height: 1.55;
-}
-
-.trend-live-feed-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin: 0.5rem 0 0 0;
-  padding-left: 0;
-  list-style: none;
-}
-
-.trend-live-feed-item {
-  font-size: 0.82rem;
-  color: #cbd5e1;
-  line-height: 1.5;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.4rem;
-}
-
-.trend-live-feed-item::before {
-  content: "⚡";
-  font-size: 0.72rem;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.trend-impact-bar {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 0.95rem;
-}
-
-@media (max-width: 768px) {
-  .trend-impact-bar {
-    grid-template-columns: 1fr;
-  }
-}
-
-.trend-impact-pill {
-  font-size: 0.78rem;
-  color: #94a3b8;
-  line-height: 1.45;
-}
-
-.trend-impact-pill strong {
-  color: #60a5fa;
-}
-
-.trend-impact-pill.jeongsi strong {
-  color: #c084fc;
 }
 
 .btn-refresh-news {
@@ -547,98 +289,6 @@
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
-}
-
-/* 뉴스 페이지네이션 (2번 사진 디자인: 원형 ‹ › 버튼 + 미니멀 수평 숫자 나열) */
-.news-pagination-bar {
-  margin: 2.5rem 0 1.5rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.news-pagination-wrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2.2rem;
-  padding: 0.5rem 1rem;
-  background: transparent;
-}
-
-.news-page-nav-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.03);
-  color: #94a3b8;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  flex-shrink: 0;
-  padding: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.news-page-nav-btn svg {
-  display: block;
-  stroke: currentColor;
-}
-
-.news-page-nav-btn:hover:not(:disabled) {
-  border-color: #10b981;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.08);
-  transform: scale(1.08);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
-}
-
-.news-page-nav-btn:disabled {
-  opacity: 0.22;
-  cursor: not-allowed;
-  border-color: rgba(255, 255, 255, 0.08);
-  color: #475569;
-  transform: none;
-  box-shadow: none;
-}
-
-.news-page-numbers {
-  display: flex;
-  align-items: center;
-  gap: 1.4rem;
-  flex-wrap: nowrap;
-}
-
-.news-page-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.35rem 0.55rem;
-  transition: all 0.2s ease;
-  line-height: 1;
-  min-width: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.news-page-btn:hover {
-  color: #ffffff;
-}
-
-.news-page-btn.active {
-  color: #10b981;
-  font-weight: 800;
-  font-size: 1.1rem;
-  transform: scale(1.08);
-  text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
 /* 우측 사이드바 (타임라인 & 챗봇) */
@@ -1817,34 +1467,4 @@
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
-
-/* =========================================================
-   대시보드 반응형 미디어 쿼리 (태블릿, 노트북 가로 스크롤 완전 제거)
-   ========================================================= */
-@media (max-width: 1100px) {
-  .news-layout {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .news-sync-controls {
-    justify-content: space-between;
-    width: 100%;
-  }
-}
-
-@media (max-width: 950px) {
-  .tab-pane {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  .news-header-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 
